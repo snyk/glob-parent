@@ -73,10 +73,10 @@ describe('glob-parent', function() {
     assert.equal(gp('path/\\*\\(a\\|b\\)/subdir/foo.*'), 'path/*(a|b)/subdir');
     assert.equal(gp('path/\\[foo bar\\]/subdir/foo.*'), 'path/[foo bar]/subdir');
     assert.equal(gp('path/\\[bar]/'), 'path/[bar]');
-    assert.equal(gp('path/\\[bar]'), 'path/[bar]');
+    assert.equal(gp('path/\\[bar]'), 'path');
     assert.equal(gp('[bar]'), '.');
     assert.equal(gp('[bar]/'), '.');
-    assert.equal(gp('./\\[bar]'), './[bar]');
+    assert.equal(gp('./\\[bar]'), '.');
     assert.equal(gp('\\[bar]/'), '[bar]');
     assert.equal(gp('\\!dir/*'), '!dir');
     assert.equal(gp('[bar\\]/'), '.');
@@ -91,9 +91,9 @@ describe('glob-parent', function() {
       assert.equal(gp('foo-\\(bar\\).md'), 'foo-');
     } else {
       assert.equal(gp('foo-\\(bar\\).md'), '.');
-      assert.equal(gp('\\[bar]'), '[bar]');
+      assert.equal(gp('\\[bar]'), '.');
       assert.equal(gp('[bar\\]'), '.');
-      assert.equal(gp('\\{foo,bar\\}'), '{foo,bar}');
+      assert.equal(gp('\\{foo,bar\\}'), '.');
       assert.equal(gp('{foo,bar\\}'), '.');
     }
 
@@ -206,6 +206,13 @@ describe('glob2base test patterns', function() {
     assert.equal(gp('js/test/**/{images,components}/*.js'), 'js/test');
 
     assert.equal(gp('ooga/{booga,sooga}/**/dooga/{eooga,fooga}'), 'ooga');
+
+    done();
+  });
+
+  it('should not be susceptible to SNYK-JS-GLOBPARENT-1016905', function(done) {
+    // This will time out if susceptible.
+    gp('{' + '/'.repeat(5000));
 
     done();
   });
